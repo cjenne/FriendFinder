@@ -5,7 +5,7 @@
 // LOAD DATA
 // We are linking our routes to a series of "data" sources.
 // =================================================
-var friends = require("../data/friends");
+var friendData = require("../data/friends");
 // =================================================
 // ROUTING
 // =================================================
@@ -16,7 +16,7 @@ module.exports = function(app) {
 // -----------------------------------------------
 
   app.get("/api/friends", function(req, res) {
-    res.json(friends);
+    res.json(friendData);
   });
   // API POST Requests
   // Below code handles when a user submits a form and thus submits data to the server.
@@ -26,15 +26,18 @@ module.exports = function(app) {
 
   app.post("/api/friends", function(req, res) {  
     // req.body holds parameters that are sent up from the client as part of a POST request.
-    var userInput = (req.body).scores;
+    // var userInput = (req.body).scores;
+    var userBody = req.body;
+    var userInput = userBody.scores;
     var name = '';
 		var photo = '';
 		var newFriendScore = 40; // Make the initial value big for comparison
-              for (let i = 0; i < friends.length; i++) {
+              for (let i = 0; i < friendData.length; i++) {
                   //for each one of the friends we need to pull the scores array.  each question in the scores array needs to be checked against like elements in the array for the userInput (req.body).scores just submitted.  
                   var scoreDifference = 0;
-                  for (let j = 0; j < friends[i].scores.length; j++) {
-                    scoreDifference += Math.abs(friends[i].scores[j] - userInput[j]);
+                  for (let j = 0; j < friendData[i].scores.length; j++) {
+                    // console.log("loop");
+                    scoreDifference += Math.abs(friendData[i].scores[j] - userInput[j]);
                   
                   //if the number does not match for a question the difference should be calculated. Then all of the differences should be added together.
                 }
@@ -44,15 +47,15 @@ module.exports = function(app) {
                     // console.log('Friend name = ' + friends[i].name);
                     // console.log('Friend image = ' + friends[i].photo);
                     scoreDifference = newFriendScore;
-                    name = friends[i].name;
-                    photo = friends[i].photo;
+                    name = friendData[i].name;
+                    photo = friendData[i].photo;
                   }
                   //the friend with the lowest number is a match and their name and photo will be posted to the modal below
               }
-              friends.push(userInput);
+              friendData.push(userBody);
 
               // Send appropriate response
-              res.json({status: true, name: name, photo: photo});
+              res.json({ok: true, name: name, photo: photo});
           });
 
   // ---------------------------------------------------------------------------
